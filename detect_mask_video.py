@@ -10,7 +10,7 @@ import cv2
 import os
 
 def detect_and_predict_mask(frame, faceNet, maskNet):
-	# grab the dimensions of the frame and then construct a blob
+	# initialize the dimensions of the frame and the create bob on it
 	# from it
 	(h, w) = frame.shape[:2]
 	blob = cv2.dnn.blobFromImage(frame, 1.0, (224, 224),
@@ -27,9 +27,9 @@ def detect_and_predict_mask(frame, faceNet, maskNet):
 	locs = []
 	preds = []
 
-	# loop over the detections
+	# run loops over detection
 	for i in range(0, detections.shape[2]):
-		# extract the confidence (i.e., probability) associated with
+		# extract the probabiltiy of the outcame considering it as the confidence in the model
 		# the detection
 		confidence = detections[0, 0, i, 2]
 
@@ -41,7 +41,7 @@ def detect_and_predict_mask(frame, faceNet, maskNet):
 			box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
 			(startX, startY, endX, endY) = box.astype("int")
 
-			# ensure the bounding boxes fall within the dimensions of
+			# ensure the input lies in the frame for better detection
 			# the frame
 			(startX, startY) = (max(0, startX), max(0, startY))
 			(endX, endY) = (min(w - 1, endX), min(h - 1, endY))
